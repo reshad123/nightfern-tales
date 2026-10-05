@@ -32,7 +32,8 @@ from src.story import (
     record_used,
     story_to_text,
 )
-from src.upload_youtube import upload_video
+from src.thumbnail import make_thumbnail
+from src.upload_youtube import set_thumbnail, upload_video
 from src.visuals import fetch_clips
 from src.youtube_auth import require_expected_channel
 
@@ -104,6 +105,12 @@ def command_run(upload: bool):
     meta["privacy"] = PRIVACY_STATUS
     (work / "metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
+    thumbnail = None
+    try:
+        thumbnail = make_thumbnail(base, story["title"], meta["minutes"], str(work))
+    except Exception as exc:  # a thumbnail problem must never stop the upload
+        print(f"Could not make a thumbnail: {exc}")
+
     if not upload:
         print(
             "\nDry run finished. Nothing was uploaded. Review workdir/story.txt, "
@@ -115,6 +122,11 @@ def command_run(upload: bool):
         final, meta["title"], meta["description"], meta["tags"], PRIVACY_STATUS
     )
     record_used(seed["id"], story["title"])
+    if thumbnail and result.get("id"):
+        try:
+            set_thumbnail(result["id"], thumbnail)
+        except Exception as exc:
+            print(f"Thumbnail was not set: {exc}")
     print(f"Done: https://www.youtube.com/watch?v={result.get('id')} ({PRIVACY_STATUS})")
 
 

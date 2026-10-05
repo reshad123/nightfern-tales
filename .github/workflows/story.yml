@@ -83,6 +83,7 @@ jobs:
             workdir/metadata.json
             workdir/mix.m4a
             workdir/preview.mp4
+            workdir/thumbnail.jpg
           if-no-files-found: ignore
           retention-days: 7
 

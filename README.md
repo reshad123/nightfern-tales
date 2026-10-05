@@ -77,8 +77,8 @@ Repo > Settings > Secrets and variables > Actions.
 ## First run (dry run)
 1. Actions tab > **Nightfern Story** > **Run workflow**, leave "Upload" **off**, run it.
 2. When it finishes, open the run and download the **review-...** file at the bottom.
-   It holds `story.txt` (read it), `mix.m4a` (the full audio, listen to it) and
-   `preview.mp4` (the first 3 minutes).
+   It holds `story.txt` (read it), `mix.m4a` (the full audio, listen to it),
+   `preview.mp4` (the first 3 minutes) and `thumbnail.jpg`.
 3. If something fails, send me the log and I will fix it.
 
 For a cheaper first check of just the writing, run locally: `python main.py story-only`.
@@ -102,7 +102,10 @@ Listen, then set the `TTS_VOICE` repo variable (or `TTS_VOICE` in `config.py`).
 - **Policy risk.** YouTube de-monetizes mass-produced, templated content. Keep an
   eye on Studio, and keep uploads private until you are comfortable.
 - **Sound.** The background is generated noise, so there are no music licensing claims.
-- **Not automated yet.** Custom thumbnails and an intro/outro.
+- **Thumbnails** are made automatically (`thumbnail.jpg` is in the review files) and set after
+  upload. Custom thumbnails need the channel to be phone-verified; if YouTube refuses, the log
+  says so and you can upload `thumbnail.jpg` by hand in Studio.
+- **Not automated yet.** An intro/outro.
 
 ## Tuning (all in `config.py`)
 | Setting | What it does |

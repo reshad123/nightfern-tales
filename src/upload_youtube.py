@@ -16,6 +16,7 @@ INIT_URL = (
     "https://www.googleapis.com/upload/youtube/v3/videos"
     "?uploadType=resumable&part=snippet,status"
 )
+THUMB_URL = "https://www.googleapis.com/upload/youtube/v3/thumbnails/set"
 # Must be a multiple of 256 KiB. 16 MiB is a good size for CI runners.
 CHUNK = 16 * 1024 * 1024
 MAX_FAILURES = 8
@@ -165,3 +166,29 @@ def upload_video(video_path, title, description, tags, privacy="private"):
             offset, done = _ask_progress(session, token, size)
             if done:
                 return done
+
+
+def set_thumbnail(video_id: str, image_path: str) -> bool:
+    """Attach a custom thumbnail. Returns False (with the reason) if refused."""
+    with open(image_path, "rb") as handle:
+        data = handle.read()
+    resp = requests.post(
+        THUMB_URL,
+        params={"videoId": video_id, "uploadType": "media"},
+        data=data,
+        headers={
+            "Authorization": f"Bearer {get_access_token()}",
+            "Content-Type": "image/jpeg",
+        },
+        timeout=120,
+    )
+    if resp.status_code == 200:
+        print("Custom thumbnail set.")
+        return True
+    print(
+        f"Thumbnail was not set ({resp.status_code}): {resp.text[:300]}\n"
+        "If this says the channel is not allowed to use custom thumbnails, "
+        "verify the channel by phone at youtube.com/verify, then upload "
+        "thumbnail.jpg by hand in YouTube Studio."
+    )
+    return False
