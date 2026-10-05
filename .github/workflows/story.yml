@@ -1,0 +1,111 @@
+name: Nightfern Story
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: "Upload to YouTube? Leave OFF for a dry run you can review first."
+        type: boolean
+        default: false
+      seed:
+        description: "Story seed id (leave blank for the next unused one)"
+        type: string
+        default: ""
+  # Turn the daily schedule on only AFTER you are happy with the dry-run results:
+  # remove the '#' from the next two lines.
+  # 00:00 UTC = 8 pm US Eastern in summer, 7 pm in winter.
+  # schedule:
+  #   - cron: "0 0 * * *"
+
+concurrency:
+  group: nightfern-story
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  make-story:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # A static ffmpeg build is more reliable than apt on CI runners.
+      - name: Setup ffmpeg
+        run: |
+          set -euo pipefail
+          url="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz"
+          for i in 1 2 3 4 5; do
+            if curl -fL --retry 3 --retry-delay 2 -o /tmp/ffmpeg.tar.xz "$url"; then
+              break
+            fi
+            echo "ffmpeg download attempt $i failed"
+            sleep $((i * 3))
+          done
+          mkdir -p /tmp/ffmpeg-extract
+          tar -xJf /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg-extract
+          bin_dir="$(find /tmp/ffmpeg-extract -type d -name bin -print -quit)"
+          sudo install -m 755 "$bin_dir/ffmpeg" /usr/local/bin/ffmpeg
+          sudo install -m 755 "$bin_dir/ffprobe" /usr/local/bin/ffprobe
+          ffmpeg -version | head -1
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Make the story video
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          EXPECTED_CHANNEL_ID: ${{ vars.EXPECTED_CHANNEL_ID }}
+          PRIVACY_STATUS: ${{ vars.PRIVACY_STATUS || 'private' }}
+          TTS_VOICE: ${{ vars.TTS_VOICE || 'en-US-AndrewNeural' }}
+          STORY_SEED: ${{ inputs.seed }}
+          UPLOAD: ${{ (github.event_name == 'schedule' || inputs.upload) && 'true' || 'false' }}
+        run: python main.py
+
+      - name: Attach review files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-${{ github.run_id }}
+          path: |
+            workdir/story.txt
+            workdir/metadata.json
+            workdir/mix.m4a
+            workdir/preview.mp4
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Keep the full video if something failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-video-${{ github.run_id }}
+          path: workdir/final.mp4
+          if-no-files-found: ignore
+          retention-days: 2
+
+      # Uses the branch the run is on, so there is no master/main mix-up.
+      - name: Save used stories
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/used_stories.json
+          if git diff --cached --quiet; then
+            echo "No change to the used-story list"
+          else
+            git commit -m "Record uploaded story"
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
