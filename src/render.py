@@ -10,12 +10,17 @@ Plan:
   4. The narration is mixed with a soft rain-like noise bed and faded in/out.
 """
 
+import re
 from pathlib import Path
 
 from config import (
     BED_VOLUME,
     CLIP_MAX_SECONDS,
     END_TAIL_SECONDS,
+    NIGHT_MIN_FACTOR,
+    NIGHT_TARGET_LUMA,
+    NIGHT_TINT_BLUE,
+    NIGHT_TINT_WARM,
     VIDEO_CRF,
     VIDEO_FPS,
     VIDEO_HEIGHT,
@@ -24,35 +29,73 @@ from config import (
 from src.media import duration_seconds, run
 
 
-def _normalize_clip(src: str, dst: Path) -> float:
+def clip_luma(path: str) -> float:
+    """Average brightness of a clip (video-range luma, 16-235), from 3 sampled frames."""
+    middle = max(0.0, duration_seconds(path) / 2)
+    proc = run(
+        ["ffmpeg", "-v", "error", "-ss", f"{middle:.2f}", "-i", path,
+         "-frames:v", "3", "-vf", "signalstats,metadata=print:file=-",
+         "-f", "null", "-"],
+        what="measure clip brightness",
+    )
+    values = [float(v) for v in re.findall(r"lavfi\.signalstats\.YAVG=([\d.]+)", proc.stdout)]
+    return sum(values) / len(values) if values else 100.0
+
+
+def night_factor(luma: float) -> float:
+    """How much to scale a clip's brightness so it ends near the night target."""
+    return max(NIGHT_MIN_FACTOR, min(1.0, NIGHT_TARGET_LUMA / max(luma, 1.0)))
+
+
+def _night_filters(factor: float) -> str:
+    """Night look in ONE cheap lookup pass: darken the brightness (relative to video black,
+    16), nudge colour towards moonlight blue, and desaturate slightly; then a soft vignette.
+    (An earlier version used `colorbalance`, which was 15x slower at 1080p.)"""
+    return (
+        f"lutyuv=y='16+(val-16)*{factor:.3f}':"
+        f"u='128+(val-128)*0.9+{NIGHT_TINT_BLUE}':"
+        f"v='128+(val-128)*0.9-{NIGHT_TINT_WARM}',"
+        "vignette=angle=PI/5"
+    )
+
+
+def _normalize_clip(src: str, dst: Path, intermediate: bool) -> float:
     seconds = min(duration_seconds(src), float(CLIP_MAX_SECONDS))
     fade = min(1.5, seconds / 4)
+    luma = clip_luma(src)
+    factor = night_factor(luma)
     vf = (
         f"scale={VIDEO_WIDTH}:{VIDEO_HEIGHT}:force_original_aspect_ratio=increase,"
         f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT},setsar=1,fps={VIDEO_FPS},"
-        "eq=brightness=-0.05:saturation=0.85,"
+        f"{_night_filters(factor)},"
         f"fade=t=in:st=0:d={fade:.2f},"
         f"fade=t=out:st={seconds - fade:.2f}:d={fade:.2f},"
         "format=yuv420p"
     )
+    if intermediate:  # an overlay pass follows and does the final encode
+        codec = ["-preset", "ultrafast", "-crf", "18"]
+    else:
+        codec = ["-preset", "veryfast", "-crf", str(VIDEO_CRF),
+                 "-maxrate", "3000k", "-bufsize", "6000k"]
     run(
         ["ffmpeg", "-y", "-loglevel", "error", "-t", f"{seconds:.2f}", "-i", src,
-         "-vf", vf, "-an", "-c:v", "libx264", "-preset", "veryfast",
-         "-crf", str(VIDEO_CRF), "-maxrate", "3000k", "-bufsize", "6000k",
-         "-g", "60", "-keyint_min", "60", "-sc_threshold", "0", str(dst)],
+         "-vf", vf, "-an", "-c:v", "libx264", *codec,
+         "-g", str(2 * VIDEO_FPS), "-keyint_min", str(2 * VIDEO_FPS),
+         "-sc_threshold", "0", str(dst)],
         what=f"encode clip {Path(src).name}",
     )
+    print(f"    brightness {luma:.0f} -> darkened x{factor:.2f}")
     return seconds
 
 
-def build_base(clip_paths, workdir: str):
-    """Join the clips into base.mp4. Returns (path, seconds)."""
+def build_base(clip_paths, workdir: str, intermediate: bool = False):
+    """Join the night-graded clips into base.mp4. Returns (path, seconds)."""
     work = Path(workdir) / "segments"
     work.mkdir(parents=True, exist_ok=True)
     lines, total = [], 0.0
     for i, src in enumerate(clip_paths, 1):
         dst = work / f"seg_{i:02d}.mp4"
-        total += _normalize_clip(src, dst)
+        total += _normalize_clip(src, dst, intermediate)
         lines.append(f"file '{dst.resolve().as_posix()}'")
         print(f"  encoded clip {i}/{len(clip_paths)}")
     list_path = work / "concat.txt"

@@ -20,6 +20,7 @@ import requests
 from config import (
     GROQ_MODEL_ORDER,
     GROQ_PAUSE_SECONDS,
+    SCENE_MAX_RATIO,
     SCENE_TARGET_WORDS,
     SEEDS,
     USED_STORIES_PATH,
@@ -181,9 +182,11 @@ def _extract_json(text: str):
 OUTLINE_SYSTEM = (
     "You plan calm sleep stories for adults, especially older listeners. "
     "The story is told to the listener in second person, present tense "
-    "(you). Nothing dramatic ever happens: no danger, conflict, sadness, "
-    "loss, illness, hurry, surprises or frightening images. The mood is "
-    "warm, safe, nostalgic and unhurried. Reply with JSON only."
+    "(you). The whole story takes place at night, under the moon and stars "
+    "or by lamplight; the darkness is soft, warm and safe. Nothing dramatic "
+    "ever happens: no danger, conflict, sadness, loss, illness, hurry, "
+    "surprises or frightening images. The mood is warm, safe, nostalgic and "
+    "unhurried. Reply with JSON only."
 )
 
 
@@ -239,6 +242,9 @@ SCENE_SYSTEM = (
     "second person, present tense (you). Rules:\n"
     "- Calm, warm, unhurried. Use sensory detail: soft sounds, textures, "
     "warmth, gentle smells. Return to the same comforting details.\n"
+    "- It is night throughout: moonlight, stars, lamplight, a quiet dark "
+    "that feels soft and safe. Never mention morning, sunrise, daylight or "
+    "bright sun.\n"
     "- Nothing dramatic happens. No danger, conflict, sadness, loss, illness, "
     "hurry, surprises, technology, news, money worries or frightening or "
     "violent images.\n"
@@ -326,13 +332,21 @@ def write_scene(seed, outline, index, tail):
             problem = "Use at least 3 paragraphs separated by blank lines."
         else:
             average, longest = sentence_stats(text)
-            if (average > 21 or longest > 40) and attempt < 2:
-                problem = (
+            notes = []
+            if words > target * SCENE_MAX_RATIO:
+                notes.append(
+                    f"Your draft was {words} words, too long. Write about "
+                    f"{target} words and no more than {int(target * 1.2)}."
+                )
+            if average > 21 or longest > 40:
+                notes.append(
                     f"Your sentences are too long (average {average:.0f} words, "
                     f"longest {longest}). Rewrite with short sentences of about "
                     "10 to 16 words. Split long lists into separate sentences."
                 )
-                if words >= target * 0.7 and words > best_words:
+            if notes and attempt < 2:
+                problem = " ".join(notes)
+                if words >= target * 0.7 and (best is None or words < best_words):
                     best, best_words = paragraphs, words
             else:
                 return paragraphs

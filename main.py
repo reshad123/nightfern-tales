@@ -20,11 +20,13 @@ from config import (
     BASE_TAGS,
     DISCLAIMER,
     HASHTAGS,
+    OVERLAYS_ENABLED,
     PRIVACY_STATUS,
     SAFETY_LINE,
     WORKDIR,
 )
 from src.narrate import narrate, voice_test
+from src.overlays import apply_overlay
 from src.render import build_audio, build_base, build_final, build_preview
 from src.story import (
     generate_story,
@@ -96,7 +98,11 @@ def command_run(upload: bool):
     clips = fetch_clips(seed["keywords"], str(work / "clips"))
 
     print("Rendering...")
-    base, _ = build_base(clips, str(work))
+    overlay = seed.get("overlay") if OVERLAYS_ENABLED else None
+    base, _ = build_base(clips, str(work), intermediate=bool(overlay))
+    if overlay:
+        print(f"Adding {overlay} overlay...")
+        base = apply_overlay(base, overlay, str(work))
     mix, total = build_audio(narration, str(work))
     final = build_final(base, mix, total, str(work))
     build_preview(final, str(work))
@@ -107,7 +113,7 @@ def command_run(upload: bool):
 
     thumbnail = None
     try:
-        thumbnail = make_thumbnail(base, story["title"], meta["minutes"], str(work))
+        thumbnail = make_thumbnail(base, story["title"], meta["minutes"], str(work), seed["id"])
     except Exception as exc:  # a thumbnail problem must never stop the upload
         print(f"Could not make a thumbnail: {exc}")
 

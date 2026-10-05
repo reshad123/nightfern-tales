@@ -75,6 +75,7 @@ jobs:
           TTS_VOICE: ${{ vars.TTS_VOICE || 'en-US-AndrewNeural' }}
           STORY_SEED: ${{ inputs.seed }}
           QUICK_TEST: ${{ inputs.quick_test && 'true' || 'false' }}
+          OVERLAYS: ${{ vars.OVERLAYS || 'on' }}
           UPLOAD: ${{ (github.event_name == 'schedule' || inputs.upload) && 'true' || 'false' }}
         run: python main.py
 
