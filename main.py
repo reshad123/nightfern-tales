@@ -26,7 +26,7 @@ from config import (
     WORKDIR,
 )
 from src.narrate import narrate, voice_test
-from src.overlays import apply_overlay
+from src.overlays import apply_overlay, overlay_report
 from src.render import build_audio, build_base, build_final, build_preview
 from src.story import (
     generate_story,
@@ -102,7 +102,12 @@ def command_run(upload: bool):
     base, _ = build_base(clips, str(work), intermediate=bool(overlay))
     if overlay:
         print(f"Adding {overlay} overlay...")
+        plain = base
         base = apply_overlay(base, overlay, str(work))
+        try:
+            print(overlay_report(plain, base, overlay))
+        except Exception as exc:  # a measuring problem must never stop the video
+            print(f"(could not measure the overlay: {exc})")
     mix, total = build_audio(narration, str(work))
     final = build_final(base, mix, total, str(work))
     build_preview(final, str(work))

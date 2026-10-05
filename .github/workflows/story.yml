@@ -15,11 +15,11 @@ on:
         description: "Story seed id (leave blank for the next unused one)"
         type: string
         default: ""
-  # Turn the daily schedule on only AFTER you are happy with the dry-run results:
-  # remove the '#' from the next two lines.
-  # 00:00 UTC = 8 pm US Eastern in summer, 7 pm in winter.
-  # schedule:
-  #   - cron: "0 0 * * *"
+  # One story a day. 00:00 UTC = 8 pm US Eastern in summer, 7 pm in winter.
+  # GitHub can start scheduled runs late (sometimes by an hour or more).
+  # To pause the automation, put a '#' in front of the two lines below.
+  schedule:
+    - cron: "0 0 * * *"
 
 concurrency:
   group: nightfern-story
