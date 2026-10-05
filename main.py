@@ -122,7 +122,8 @@ def command_run(upload: bool):
     result = upload_video(
         final, meta["title"], meta["description"], meta["tags"], PRIVACY_STATUS
     )
-    record_used(seed["id"], story["title"])
+    if os.environ.get("QUICK_TEST", "").strip().lower() not in ("1", "true", "yes"):
+        record_used(seed["id"], story["title"])
     if thumbnail and result.get("id"):
         try:
             set_thumbnail(result["id"], thumbnail)

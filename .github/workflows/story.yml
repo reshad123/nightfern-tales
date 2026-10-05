@@ -7,6 +7,10 @@ on:
         description: "Upload to YouTube? Leave OFF for a dry run you can review first."
         type: boolean
         default: false
+      quick_test:
+        description: "Quick test: a short story of about 10 minutes (faster, does not use up a seed)"
+        type: boolean
+        default: false
       seed:
         description: "Story seed id (leave blank for the next unused one)"
         type: string
@@ -70,6 +74,7 @@ jobs:
           PRIVACY_STATUS: ${{ vars.PRIVACY_STATUS || 'private' }}
           TTS_VOICE: ${{ vars.TTS_VOICE || 'en-US-AndrewNeural' }}
           STORY_SEED: ${{ inputs.seed }}
+          QUICK_TEST: ${{ inputs.quick_test && 'true' || 'false' }}
           UPLOAD: ${{ (github.event_name == 'schedule' || inputs.upload) && 'true' || 'false' }}
         run: python main.py
 

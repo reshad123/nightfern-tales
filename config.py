@@ -38,6 +38,11 @@ GROQ_MODEL_ORDER = (
 # About 4,500 words in total, which is roughly 38-42 minutes when narrated.
 SCENE_TARGET_WORDS = [600, 650, 650, 650, 600, 550, 450, 350]
 
+# QUICK_TEST=true makes a short story of about 10 minutes (and never uses up a
+# story seed). Handy for checking the voice, the upload, or prompt changes fast.
+if os.environ.get("QUICK_TEST", "").strip().lower() in ("1", "true", "yes"):
+    SCENE_TARGET_WORDS = [450, 350, 300]
+
 # Pause between Groq calls (seconds). The free tier limits tokens per minute,
 # so we space the requests out instead of hammering the API.
 GROQ_PAUSE_SECONDS = 18
@@ -68,7 +73,7 @@ VIDEO_WIDTH = 1920
 VIDEO_HEIGHT = 1080
 VIDEO_FPS = 30
 CLIP_MAX_SECONDS = 40
-CLIPS_WANTED = 12
+CLIPS_WANTED = 24
 CLIPS_MINIMUM = 6
 VIDEO_CRF = 27
 
