@@ -108,7 +108,7 @@ def build_final(base: str, mix: str, total: float, workdir: str) -> str:
 
 def build_preview(final: str, workdir: str, seconds: int = 180) -> str:
     """A short cut from the start so you can check the look and sound fast."""
-    out = Path(workdir) / "preview.mp4"
+    out = Path(workdir) / "preview_first_3_minutes.mp4"
     run(
         ["ffmpeg", "-y", "-loglevel", "error", "-i", final, "-t", str(seconds),
          "-c", "copy", "-movflags", "+faststart", str(out)],

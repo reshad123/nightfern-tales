@@ -116,6 +116,13 @@ def count_words(text: str) -> int:
     return len(text.split())
 
 
+def sentence_stats(text: str):
+    """(average, longest) sentence length in words."""
+    sentences = [x for x in re.split(r"(?<=[.!?])\s+", text.strip()) if x]
+    lengths = [len(x.split()) for x in sentences] or [0]
+    return sum(lengths) / len(lengths), max(lengths)
+
+
 def normalize_paragraphs(text: str):
     """Turn model output into a clean list of plain paragraphs."""
     text = text.replace("\r\n", "\n")
@@ -132,6 +139,11 @@ def normalize_paragraphs(text: str):
         if re.match(r"^(scene|chapter|part)\s+\d+\b", line, re.IGNORECASE):
             continue
         line = line.replace("\u2014", ", ").replace("\u2013", ", ")
+        for odd in ("\u2010", "\u2011", "\u2012"):  # special hyphens
+            line = line.replace(odd, "-")
+        line = (line.replace("\u2019", "'").replace("\u2018", "'")
+                .replace("\u201c", '"').replace("\u201d", '"')
+                .replace("\u00a0", " ").replace("\u202f", " "))
         line = re.sub(r"\s+,", ",", line)
         line = re.sub(r"\s{2,}", " ", line).strip()
         kept.append(line)
@@ -230,8 +242,12 @@ SCENE_SYSTEM = (
     "- Nothing dramatic happens. No danger, conflict, sadness, loss, illness, "
     "hurry, surprises, technology, news, money worries or frightening or "
     "violent images.\n"
-    "- Use plain, familiar words and short to medium sentences. No slang. "
+    "- Use plain, familiar words. Sentences average 10 to 16 words and never "
+    "run past 25 words. Do not pile up long lists of details inside one "
+    "sentence; give each detail its own short sentence. No slang. "
     "Paragraphs of 3 to 5 sentences.\n"
+    "- Vary your wording. Use the words 'gentle' and 'soft' at most once per "
+    "paragraph.\n"
     "- Invented place names only. No real people, brands, or copyrighted "
     "characters.\n"
     "- The story slowly becomes simpler and quieter as it goes.\n"
@@ -309,7 +325,17 @@ def write_scene(seed, outline, index, tail):
         elif len(paragraphs) < 3:
             problem = "Use at least 3 paragraphs separated by blank lines."
         else:
-            return paragraphs
+            average, longest = sentence_stats(text)
+            if (average > 21 or longest > 40) and attempt < 2:
+                problem = (
+                    f"Your sentences are too long (average {average:.0f} words, "
+                    f"longest {longest}). Rewrite with short sentences of about "
+                    "10 to 16 words. Split long lists into separate sentences."
+                )
+                if words >= target * 0.7 and words > best_words:
+                    best, best_words = paragraphs, words
+            else:
+                return paragraphs
         print(f"Scene {index + 1} attempt {attempt + 1}: {problem}")
         if not banned and words > best_words and words >= target * 0.55:
             best, best_words = paragraphs, words

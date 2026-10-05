@@ -78,7 +78,7 @@ Repo > Settings > Secrets and variables > Actions.
 1. Actions tab > **Nightfern Story** > **Run workflow**, leave "Upload" **off**, run it.
 2. When it finishes, open the run and download the **review-...** file at the bottom.
    It holds `story.txt` (read it), `mix.m4a` (the full audio, listen to it),
-   `preview.mp4` (the first 3 minutes) and `thumbnail.jpg`.
+   `preview_first_3_minutes.mp4` (the first 3 minutes) and `thumbnail.jpg`.
 3. If something fails, send me the log and I will fix it.
 
 For a cheaper first check of just the writing, run locally: `python main.py story-only`.

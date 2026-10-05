@@ -114,7 +114,8 @@ def command_run(upload: bool):
     if not upload:
         print(
             "\nDry run finished. Nothing was uploaded. Review workdir/story.txt, "
-            "mix.m4a and preview.mp4 (they are attached to the workflow run)."
+            "mix.m4a (the FULL audio) and preview_first_3_minutes.mp4 (only the first 3 minutes; "
+            "the full video is built but too large to attach)."
         )
         return
 
