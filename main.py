@@ -14,22 +14,28 @@ import json
 import os
 import shutil
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 from config import (
     BASE_TAGS,
     DISCLAIMER,
     HASHTAGS,
+    MIN_LEAD_MINUTES,
     OVERLAYS_ENABLED,
     PRIVACY_STATUS,
+    PUBLISH_TIME,
+    PUBLISH_TZ,
     SAFETY_LINE,
     WORKDIR,
 )
 from src.narrate import narrate, voice_test
 from src.overlays import apply_overlay, overlay_report
 from src.render import build_audio, build_base, build_final, build_preview
+from src.schedule import describe_slot, next_publish_slot, to_youtube_time
 from src.story import (
     generate_story,
+    load_used,
     pick_seed,
     record_used,
     story_to_text,
@@ -130,17 +136,29 @@ def command_run(upload: bool):
         )
         return
 
+    quick = os.environ.get("QUICK_TEST", "").strip().lower() in ("1", "true", "yes")
+    visibility, publish_at = PRIVACY_STATUS, None
+    if quick:
+        visibility = "private"  # a short test video must never go public by accident
+    elif PRIVACY_STATUS == "public":
+        slot = next_publish_slot(datetime.now(timezone.utc), load_used(),
+                                 PUBLISH_TIME, PUBLISH_TZ, MIN_LEAD_MINUTES)
+        publish_at, visibility = to_youtube_time(slot), "private"
+        print(f"Scheduled: it stays private now and YouTube makes it public at "
+              f"{describe_slot(slot, PUBLISH_TZ)}")
+
     result = upload_video(
-        final, meta["title"], meta["description"], meta["tags"], PRIVACY_STATUS
+        final, meta["title"], meta["description"], meta["tags"], visibility, publish_at
     )
-    if os.environ.get("QUICK_TEST", "").strip().lower() not in ("1", "true", "yes"):
-        record_used(seed["id"], story["title"])
+    if not quick:
+        record_used(seed["id"], story["title"], publish_at)
     if thumbnail and result.get("id"):
         try:
             set_thumbnail(result["id"], thumbnail)
         except Exception as exc:
             print(f"Thumbnail was not set: {exc}")
-    print(f"Done: https://www.youtube.com/watch?v={result.get('id')} ({PRIVACY_STATUS})")
+    state = f"public at {publish_at}" if publish_at else visibility
+    print(f"Done: https://www.youtube.com/watch?v={result.get('id')} ({state})")
 
 
 def main():

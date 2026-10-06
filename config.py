@@ -108,6 +108,18 @@ BED_VOLUME = float(os.environ.get("BED_VOLUME", "0.35"))
 # (GitHub repo variable PRIVACY_STATUS) once you trust the output.
 PRIVACY_STATUS = os.environ.get("PRIVACY_STATUS", "private")
 
+# When PRIVACY_STATUS is "public", each video is uploaded PRIVATE a few hours early and YouTube
+# itself makes it public at the time below, in PUBLISH_TZ (summer/winter time is handled for you).
+# Times are 24-hour, local to PUBLISH_TZ. Monday = 0 ... Sunday = 6.
+# Weekdays 2 pm and weekends 10 am Eastern follow the usual "post before the evening peak" advice.
+# Sleep stories are watched at bedtime, so for those you may prefer "22:00" (10 pm) every day.
+PUBLISH_TZ = os.environ.get("PUBLISH_TZ", "America/New_York")
+PUBLISH_TIME = os.environ.get("PUBLISH_TIME", "").strip() or {   # a PUBLISH_TIME variable overrides all days
+    0: "14:00", 1: "14:00", 2: "14:00", 3: "14:00", 4: "14:00",   # Mon-Fri
+    5: "10:00", 6: "10:00",                                       # Sat, Sun
+}
+MIN_LEAD_MINUTES = 90  # never schedule closer than this to the moment the upload finishes
+
 DISCLAIMER = "This story was written with AI and narrated with a synthetic voice."
 SAFETY_LINE = "Please only listen when you are in a place where it is safe to fall asleep."
 HASHTAGS = "#sleepstory #bedtimestory #relaxing"

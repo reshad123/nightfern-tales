@@ -87,8 +87,11 @@ def _ask_progress(session: str, token: str, size: int):
     raise RuntimeError(f"Could not resume upload ({resp.status_code}): {resp.text[:300]}")
 
 
-def upload_video(video_path, title, description, tags, privacy="private"):
-    """Upload and return YouTube's video resource (it has the video 'id')."""
+def upload_video(video_path, title, description, tags, privacy="private", publish_at=None):
+    """Upload and return YouTube's video resource (it has the video 'id').
+
+    publish_at (e.g. "2026-10-07T02:00:00Z"): YouTube makes the video public at that moment.
+    YouTube only allows this while the video is private, so the privacy is forced to private."""
     size = os.path.getsize(video_path)
     if size == 0:
         raise RuntimeError("The video file is empty.")
@@ -102,10 +105,14 @@ def upload_video(video_path, title, description, tags, privacy="private"):
         },
         "status": {"privacyStatus": privacy, "selfDeclaredMadeForKids": False},
     }
+    if publish_at:
+        metadata["status"]["privacyStatus"] = "private"
+        metadata["status"]["publishAt"] = publish_at
 
     token = get_access_token()
     session = _init_session(token, metadata, size)
-    print(f"Uploading {size / 1_000_000:.0f} MB as '{privacy}'...")
+    shown = f"private, public at {publish_at}" if publish_at else privacy
+    print(f"Uploading {size / 1_000_000:.0f} MB as '{shown}'...")
 
     offset, failures, last_pct = 0, 0, -1
     with open(video_path, "rb") as handle:

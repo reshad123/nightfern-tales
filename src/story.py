@@ -401,10 +401,12 @@ def load_used():
         return []
 
 
-def record_used(seed_id: str, title: str) -> None:
+def record_used(seed_id: str, title: str, publish_at: str = None) -> None:
     used = load_used()
-    used.append({"seed_id": seed_id, "title": title,
-                 "date": time.strftime("%Y-%m-%d")})
+    entry = {"seed_id": seed_id, "title": title, "date": time.strftime("%Y-%m-%d")}
+    if publish_at:  # remembered so two videos are never scheduled for the same moment
+        entry["publish_at"] = publish_at
+    used.append(entry)
     USED_STORIES_PATH.parent.mkdir(parents=True, exist_ok=True)
     USED_STORIES_PATH.write_text(json.dumps(used, indent=2), encoding="utf-8")
 
