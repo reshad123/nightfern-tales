@@ -31,7 +31,7 @@ from src.media import duration_seconds, run
 
 FPS = VIDEO_FPS
 LOOP_SECONDS = {"snow": 60, "rain": 60, "stars": 6, "mist": 120}
-OPACITY = {"snow": 0.60, "rain": 0.60, "stars": 1.00, "mist": 0.16}
+OPACITY = {"snow": 0.60, "rain": 0.60, "stars": 0.65, "mist": 0.16}
 KINDS = tuple(LOOP_SECONDS)
 
 
@@ -114,11 +114,10 @@ def graph(kind: str) -> str:
         return f"{fine}[a];{near}[b];[a][b]blend=all_mode=lighten,format=yuv420p[fx]"
     if kind == "stars":
         omega = 2 * math.pi / LOOP_SECONDS["stars"]  # one calm twinkle per loop
-        small = _star_layer(2.6, 0.5, 1.4, 0.45, omega, cell=1, seed=5)
-        medium = _star_layer(0.12, 1.6, 10, 0.35, omega, cell=14, seed=6)
-        large = _star_layer(0.02, 3.0, 40, 0.30, omega, cell=30, seed=7)
-        return (f"{small}[a];{medium}[b];{large}[c];[a][b]blend=all_mode=lighten[ab];"
-                "[ab][c]blend=all_mode=lighten,format=yuv420p[fx]")
+        # Minimal: only fine, faint pin-point stars. (The big soft glows turned into flat
+        # bright blobs after YouTube compression, so they were removed.)
+        small = _star_layer(1.2, 0.5, 1.4, 0.45, omega, cell=1, seed=5)
+        return f"{small},format=yuv420p[fx]"
     if kind == "mist":
         return (
             f"nullsrc=s=24x14:r={FPS},format=gray,geq=lum='random(1)*255',"
@@ -165,7 +164,7 @@ def apply_overlay(base: str, kind: str, workdir: str) -> str:
 
 # Share of the picture (%) that should be visibly brightened, measured on the finished video.
 # Below the low end the effect is too faint to notice; far above the high end it is too busy.
-EXPECTED_VISIBILITY = {"snow": (0.4, 4.0), "rain": (0.8, 8.0), "stars": (0.4, 4.0), "mist": (5.0, 45.0)}
+EXPECTED_VISIBILITY = {"snow": (0.4, 4.0), "rain": (0.8, 8.0), "stars": (0.1, 2.0), "mist": (5.0, 45.0)}
 
 
 def _gray_frame(path: str, seconds: float) -> Image.Image:
