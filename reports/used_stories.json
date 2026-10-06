@@ -3,5 +3,11 @@
     "seed_id": "night-train",
     "title": "Midnight Train Through Snowy Peaks",
     "date": "2026-10-05"
+  },
+  {
+    "seed_id": "seaside-village",
+    "title": "Moonlit Harbor Walk",
+    "date": "2026-10-06",
+    "publish_at": "2026-10-06T18:00:00Z"
   }
 ]
