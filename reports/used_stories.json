@@ -15,5 +15,11 @@
     "title": "Night at the Lighthouse Keeper's Hearth",
     "date": "2026-10-06",
     "publish_at": "2026-10-07T18:00:00Z"
+  },
+  {
+    "seed_id": "farm-night",
+    "title": "Evening in the Farmhouse Kitchen",
+    "date": "2026-10-07",
+    "publish_at": "2026-10-08T18:00:00Z"
   }
 ]
