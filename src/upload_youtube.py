@@ -109,8 +109,22 @@ def upload_video(video_path, title, description, tags, privacy="private", publis
         metadata["status"]["privacyStatus"] = "private"
         metadata["status"]["publishAt"] = publish_at
 
+    # A token that was minted a split second ago is sometimes refused with a 401 by Google.
+    # Wait a moment, then retry (with a fresh token) instead of failing a 40-minute render.
     token = get_access_token()
-    session = _init_session(token, metadata, size)
+    time.sleep(3)
+    session = None
+    for attempt in range(6):
+        try:
+            session = _init_session(token, metadata, size)
+            break
+        except RuntimeError as exc:
+            if "(401)" not in str(exc) or attempt == 5:
+                raise
+            wait = 5 * (attempt + 1)
+            print(f"  YouTube said 401 ({attempt + 1}/6); waiting {wait}s and trying again...")
+            time.sleep(wait)
+            token = get_access_token()
     shown = f"private, public at {publish_at}" if publish_at else privacy
     print(f"Uploading {size / 1_000_000:.0f} MB as '{shown}'...")
 
