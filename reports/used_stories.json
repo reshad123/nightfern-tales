@@ -27,5 +27,11 @@
     "title": "Rainy Night in the Little Bookshop",
     "date": "2026-10-09",
     "publish_at": "2026-10-09T18:00:00Z"
+  },
+  {
+    "seed_id": "country-inn",
+    "title": "Evening at the Valley Inn",
+    "date": "2026-10-10",
+    "publish_at": "2026-10-11T14:00:00Z"
   }
 ]
