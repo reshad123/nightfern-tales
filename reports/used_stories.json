@@ -33,5 +33,11 @@
     "title": "Evening at the Valley Inn",
     "date": "2026-10-10",
     "publish_at": "2026-10-11T14:00:00Z"
+  },
+  {
+    "seed_id": "canal-boat",
+    "title": "Moonlit Canal Drift",
+    "date": "2026-10-11",
+    "publish_at": "2026-10-12T18:00:00Z"
   }
 ]
