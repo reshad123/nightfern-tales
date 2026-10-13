@@ -61,8 +61,17 @@ jobs:
           sudo install -m 755 "$bin_dir/ffprobe" /usr/local/bin/ffprobe
           ffmpeg -version | head -1
 
+      - name: Cache the voice model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: kokoro-model-v1
+
+      # CPU-only torch FIRST, so pip does not download the huge GPU build.
       - name: Install Python dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
 
       - name: Make the story video
         env:
@@ -74,6 +83,8 @@ jobs:
           EXPECTED_CHANNEL_ID: ${{ vars.EXPECTED_CHANNEL_ID }}
           PRIVACY_STATUS: ${{ vars.PRIVACY_STATUS || 'private' }}
           TTS_VOICE: ${{ vars.TTS_VOICE || 'en-US-AndrewNeural' }}
+          KOKORO_VOICE: ${{ vars.KOKORO_VOICE || 'af_heart' }}
+          KOKORO_SPEED: ${{ vars.KOKORO_SPEED || '0.8' }}
           STORY_SEED: ${{ inputs.seed }}
           QUICK_TEST: ${{ inputs.quick_test && 'true' || 'false' }}
           OVERLAYS: ${{ vars.OVERLAYS || 'on' }}

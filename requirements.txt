@@ -4,3 +4,5 @@ python-dotenv>=1.0
 google-auth-oauthlib>=1.2
 Pillow>=10.1
 tzdata>=2024.1
+kokoro>=0.9.4
+soundfile
