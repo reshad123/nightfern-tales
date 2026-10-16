@@ -51,5 +51,11 @@
     "title": "Rainy Cabin Hearth",
     "date": "2026-10-15",
     "publish_at": "2026-10-15T18:00:00Z"
+  },
+  {
+    "seed_id": "moonlit-lake",
+    "title": "Moonlit Rowboat on the Quiet Lake",
+    "date": "2026-10-16",
+    "publish_at": "2026-10-16T18:00:00Z"
   }
 ]
