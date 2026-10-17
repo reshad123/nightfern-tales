@@ -57,5 +57,11 @@
     "title": "Moonlit Rowboat on the Quiet Lake",
     "date": "2026-10-16",
     "publish_at": "2026-10-16T18:00:00Z"
+  },
+  {
+    "seed_id": "night-train",
+    "title": "Quiet Night on the Snowy Sleeper",
+    "date": "2026-10-17",
+    "publish_at": "2026-10-17T14:00:00Z"
   }
 ]
