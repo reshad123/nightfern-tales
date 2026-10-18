@@ -63,5 +63,11 @@
     "title": "Quiet Night on the Snowy Sleeper",
     "date": "2026-10-17",
     "publish_at": "2026-10-17T14:00:00Z"
+  },
+  {
+    "seed_id": "seaside-village",
+    "title": "Moonlit Village by the Sea",
+    "date": "2026-10-18",
+    "publish_at": "2026-10-18T14:00:00Z"
   }
 ]
