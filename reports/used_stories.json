@@ -69,5 +69,11 @@
     "title": "Moonlit Village by the Sea",
     "date": "2026-10-18",
     "publish_at": "2026-10-18T14:00:00Z"
+  },
+  {
+    "seed_id": "lighthouse-night",
+    "title": "Lighthouse Nights",
+    "date": "2026-10-19",
+    "publish_at": "2026-10-19T18:00:00Z"
   }
 ]
