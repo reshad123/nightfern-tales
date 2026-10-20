@@ -75,5 +75,11 @@
     "title": "Lighthouse Nights",
     "date": "2026-10-19",
     "publish_at": "2026-10-19T18:00:00Z"
+  },
+  {
+    "seed_id": "farm-night",
+    "title": "Midnight in the Farmhouse Kitchen",
+    "date": "2026-10-20",
+    "publish_at": "2026-10-20T18:00:00Z"
   }
 ]
