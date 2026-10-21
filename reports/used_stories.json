@@ -81,5 +81,11 @@
     "title": "Midnight in the Farmhouse Kitchen",
     "date": "2026-10-20",
     "publish_at": "2026-10-20T18:00:00Z"
+  },
+  {
+    "seed_id": "rainy-bookshop",
+    "title": "Moonlit Bookshop Reverie",
+    "date": "2026-10-21",
+    "publish_at": "2026-10-21T18:00:00Z"
   }
 ]
