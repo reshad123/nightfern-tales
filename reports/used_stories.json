@@ -123,5 +123,11 @@
     "title": "Midnight Train Through Snowy Peaks",
     "date": "2026-10-27",
     "publish_at": "2026-10-28T18:00:00Z"
+  },
+  {
+    "seed_id": "seaside-village",
+    "title": "Moonlit Harbor Evening",
+    "date": "2026-10-28",
+    "publish_at": "2026-10-29T18:00:00Z"
   }
 ]
