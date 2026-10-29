@@ -129,5 +129,11 @@
     "title": "Moonlit Harbor Evening",
     "date": "2026-10-28",
     "publish_at": "2026-10-29T18:00:00Z"
+  },
+  {
+    "seed_id": "lighthouse-night",
+    "title": "Evening at the Lighthouse Keeper's Hearth",
+    "date": "2026-10-29",
+    "publish_at": "2026-10-30T18:00:00Z"
   }
 ]
