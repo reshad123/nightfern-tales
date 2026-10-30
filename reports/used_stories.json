@@ -135,5 +135,11 @@
     "title": "Evening at the Lighthouse Keeper's Hearth",
     "date": "2026-10-29",
     "publish_at": "2026-10-30T18:00:00Z"
+  },
+  {
+    "seed_id": "farm-night",
+    "title": "Quiet Kitchen by Moonlight",
+    "date": "2026-10-30",
+    "publish_at": "2026-10-31T14:00:00Z"
   }
 ]
