@@ -141,5 +141,11 @@
     "title": "Quiet Kitchen by Moonlight",
     "date": "2026-10-30",
     "publish_at": "2026-10-31T14:00:00Z"
+  },
+  {
+    "seed_id": "rainy-bookshop",
+    "title": "Rainy Night in the Cozy Bookshop",
+    "date": "2026-10-31",
+    "publish_at": "2026-11-01T15:00:00Z"
   }
 ]
