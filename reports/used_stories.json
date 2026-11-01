@@ -147,5 +147,11 @@
     "title": "Rainy Night in the Cozy Bookshop",
     "date": "2026-10-31",
     "publish_at": "2026-11-01T15:00:00Z"
+  },
+  {
+    "seed_id": "country-inn",
+    "title": "Night at the Valley Stone Inn",
+    "date": "2026-11-01",
+    "publish_at": "2026-11-02T19:00:00Z"
   }
 ]
