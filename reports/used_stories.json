@@ -165,5 +165,11 @@
     "title": "Moonlit Garden Stroll",
     "date": "2026-11-03",
     "publish_at": "2026-11-04T19:00:00Z"
+  },
+  {
+    "seed_id": "forest-cabin",
+    "title": "Rainy Night in a Cabin by the Hearth",
+    "date": "2026-11-04",
+    "publish_at": "2026-11-05T19:00:00Z"
   }
 ]
