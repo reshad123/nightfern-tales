@@ -171,5 +171,11 @@
     "title": "Rainy Night in a Cabin by the Hearth",
     "date": "2026-11-04",
     "publish_at": "2026-11-05T19:00:00Z"
+  },
+  {
+    "seed_id": "moonlit-lake",
+    "title": "Moonlit Rowboat on a Calm Lake",
+    "date": "2026-11-05",
+    "publish_at": "2026-11-06T19:00:00Z"
   }
 ]
