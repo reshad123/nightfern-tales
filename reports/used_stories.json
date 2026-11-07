@@ -183,5 +183,11 @@
     "title": "Midnight Train Beneath the Snowy Moon",
     "date": "2026-11-06",
     "publish_at": "2026-11-07T15:00:00Z"
+  },
+  {
+    "seed_id": "seaside-village",
+    "title": "Moonlit Seaside Village Walk",
+    "date": "2026-11-07",
+    "publish_at": "2026-11-08T15:00:00Z"
   }
 ]
