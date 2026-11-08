@@ -189,5 +189,11 @@
     "title": "Moonlit Seaside Village Walk",
     "date": "2026-11-07",
     "publish_at": "2026-11-08T15:00:00Z"
+  },
+  {
+    "seed_id": "lighthouse-night",
+    "title": "Night at the Lighthouse Hearth",
+    "date": "2026-11-08",
+    "publish_at": "2026-11-09T19:00:00Z"
   }
 ]
