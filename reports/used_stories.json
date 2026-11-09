@@ -195,5 +195,11 @@
     "title": "Night at the Lighthouse Hearth",
     "date": "2026-11-08",
     "publish_at": "2026-11-09T19:00:00Z"
+  },
+  {
+    "seed_id": "farm-night",
+    "title": "Midnight in the Farmhouse Kitchen",
+    "date": "2026-11-09",
+    "publish_at": "2026-11-10T19:00:00Z"
   }
 ]
