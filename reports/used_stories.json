@@ -207,5 +207,11 @@
     "title": "Moonlit Bookshop Evening",
     "date": "2026-11-10",
     "publish_at": "2026-11-11T19:00:00Z"
+  },
+  {
+    "seed_id": "country-inn",
+    "title": "Evening at the Valley Stone Inn",
+    "date": "2026-11-11",
+    "publish_at": "2026-11-12T19:00:00Z"
   }
 ]
