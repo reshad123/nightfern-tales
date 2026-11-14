@@ -225,5 +225,11 @@
     "title": "Moonlit Garden Walk",
     "date": "2026-11-13",
     "publish_at": "2026-11-14T15:00:00Z"
+  },
+  {
+    "seed_id": "forest-cabin",
+    "title": "Rainy Cabin Whisper",
+    "date": "2026-11-14",
+    "publish_at": "2026-11-15T15:00:00Z"
   }
 ]
