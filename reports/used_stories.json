@@ -231,5 +231,11 @@
     "title": "Rainy Cabin Whisper",
     "date": "2026-11-14",
     "publish_at": "2026-11-15T15:00:00Z"
+  },
+  {
+    "seed_id": "moonlit-lake",
+    "title": "Moonlit Rowboat Drift",
+    "date": "2026-11-15",
+    "publish_at": "2026-11-16T19:00:00Z"
   }
 ]
