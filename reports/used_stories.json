@@ -249,5 +249,11 @@
     "title": "Moonlit Harbor Stroll",
     "date": "2026-11-17",
     "publish_at": "2026-11-18T19:00:00Z"
+  },
+  {
+    "seed_id": "lighthouse-night",
+    "title": "Quiet Night at the Lighthouse",
+    "date": "2026-11-18",
+    "publish_at": "2026-11-19T19:00:00Z"
   }
 ]
