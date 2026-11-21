@@ -267,5 +267,11 @@
     "title": "Rain\u2011kissed Bookshop at Night",
     "date": "2026-11-20",
     "publish_at": "2026-11-21T15:00:00Z"
+  },
+  {
+    "seed_id": "country-inn",
+    "title": "Evening at the Valley Stone Inn",
+    "date": "2026-11-21",
+    "publish_at": "2026-11-22T15:00:00Z"
   }
 ]
