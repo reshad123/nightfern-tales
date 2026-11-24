@@ -285,5 +285,11 @@
     "title": "Moonlit Garden Stroll",
     "date": "2026-11-23",
     "publish_at": "2026-11-24T19:00:00Z"
+  },
+  {
+    "seed_id": "forest-cabin",
+    "title": "Rainy Cabin Comfort",
+    "date": "2026-11-24",
+    "publish_at": "2026-11-25T19:00:00Z"
   }
 ]
