@@ -291,5 +291,11 @@
     "title": "Rainy Cabin Comfort",
     "date": "2026-11-24",
     "publish_at": "2026-11-25T19:00:00Z"
+  },
+  {
+    "seed_id": "moonlit-lake",
+    "title": "Moonlit Rowboat Drift",
+    "date": "2026-11-25",
+    "publish_at": "2026-11-26T19:00:00Z"
   }
 ]
